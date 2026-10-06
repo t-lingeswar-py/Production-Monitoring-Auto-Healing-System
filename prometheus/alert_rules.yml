@@ -1,0 +1,57 @@
+groups:
+  - name: AutoHealingProductionAlerts
+    rules:
+      # 1. Backend Service Down Alert
+      - alert: BackendServiceDown
+        expr: up{job="backend-app"} == 0
+        for: 5s
+        labels:
+          severity: critical
+          component: backend
+        annotations:
+          summary: "Backend Application service is DOWN"
+          description: "Target backend:3000 is unreachable or health check failed."
+
+      # 2. Database Connection Severed Alert
+      - alert: DatabaseConnectionLost
+        expr: db_connection_status == 0
+        for: 5s
+        labels:
+          severity: critical
+          component: database
+        annotations:
+          summary: "Database Connection Lost"
+          description: "Backend application reported db_connection_status = 0."
+
+      # 3. Memory Exhaustion / Leak Alert
+      - alert: CriticalMemoryExhaustion
+        expr: heap_memory_bytes > 200000000 or active_simulated_anomalies > 0
+        for: 5s
+        labels:
+          severity: warning
+          component: memory
+        annotations:
+          summary: "Critical Heap Memory Usage / Anomaly Detected"
+          description: "Memory heap usage exceeds threshold or memory leak anomaly is active."
+
+      # 4. High Request Latency Alert
+      - alert: HighRequestLatency
+        expr: rate(http_request_duration_seconds_sum[1m]) / rate(http_request_duration_seconds_count[1m]) > 1
+        for: 5s
+        labels:
+          severity: warning
+          component: latency
+        annotations:
+          summary: "High API Request Latency"
+          description: "Average API request latency exceeded 1.0 seconds."
+
+      # 5. High 5xx HTTP Error Rate Alert
+      - alert: HighHttpErrorRate
+        expr: sum(rate(http_requests_total{status_code=~"5.."}[1m])) > 0
+        for: 5s
+        labels:
+          severity: critical
+          component: api
+        annotations:
+          summary: "High HTTP 5xx Error Rate"
+          description: "Backend API is returning 5xx Internal Server Error responses."

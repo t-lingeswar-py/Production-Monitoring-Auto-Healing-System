@@ -1,0 +1,57 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 1,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "title": "Backend Service Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+      "targets": [{ "expr": "up{job=\"backend-app\"}", "legendFormat": "Status" }],
+      "options": {
+        "reduceOptions": { "values": false, "calcs": ["lastNotNull"] }
+      }
+    },
+    {
+      "title": "Database Connection Pool Status",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+      "targets": [{ "expr": "db_connection_status", "legendFormat": "DB Status" }]
+    },
+    {
+      "title": "Total Auto-Healing Recovery Actions",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+      "targets": [{ "expr": "sum(auto_healing_recovery_count_total) or vector(0)", "legendFormat": "Actions" }]
+    },
+    {
+      "title": "Active Anomalies Detected",
+      "type": "stat",
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+      "targets": [{ "expr": "active_simulated_anomalies or vector(0)", "legendFormat": "Anomalies" }]
+    },
+    {
+      "title": "HTTP Request Rate (RPS)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "targets": [{ "expr": "rate(http_requests_total[1m])", "legendFormat": "{{method}} {{route}} ({{status_code}})" }]
+    },
+    {
+      "title": "Heap Memory Usage (MB)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "targets": [{ "expr": "heap_memory_bytes / 1024 / 1024", "legendFormat": "Heap Used (MB)" }]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["production", "auto-healing", "monitoring"],
+  "time": { "from": "now-15m", "to": "now" },
+  "title": "Production Monitoring & Auto-Healing Console",
+  "uid": "prod-monitoring-dashboard"
+}

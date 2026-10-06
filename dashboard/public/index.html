@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Production Monitoring & Auto-Healing Command Center</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="glow-bg"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="logo-group">
+      <div class="shield-icon">🛡️</div>
+      <div>
+        <h1>AUTO-HEAL <span>PROD MONITOR</span></h1>
+        <p class="subtitle">Autonomous Observability & Incident Remediation System</p>
+      </div>
+    </div>
+    <div class="system-status-badge" id="system-status-badge">
+      <span class="status-dot green" id="global-status-dot"></span>
+      <span id="global-status-text">SYSTEM HEALTHY</span>
+    </div>
+  </header>
+
+  <main class="dashboard-grid">
+
+    <!-- ARCHITECTURE PIPELINE VISUALIZER -->
+    <section class="card pipeline-card">
+      <div class="card-header">
+        <h2>⚡ SYSTEM ARCHITECTURE PIPELINE</h2>
+        <span class="live-tag">LIVE TELEMETRY</span>
+      </div>
+      
+      <div class="pipeline-flow">
+        <div class="node-box" id="node-github">
+          <div class="node-icon">🐙</div>
+          <div class="node-label">GitHub</div>
+          <div class="node-status">Main Branch</div>
+        </div>
+
+        <div class="flow-arrow">➔</div>
+
+        <div class="node-box" id="node-actions">
+          <div class="node-icon">⚙️</div>
+          <div class="node-label">GitHub Actions</div>
+          <div class="node-status">CI/CD Active</div>
+        </div>
+
+        <div class="flow-arrow">➔</div>
+
+        <div class="node-box" id="node-docker">
+          <div class="node-icon">🐳</div>
+          <div class="node-label">Docker</div>
+          <div class="node-status">Containers OK</div>
+        </div>
+
+        <div class="flow-arrow">➔</div>
+
+        <div class="node-box primary-node" id="node-backend">
+          <div class="node-icon">⚡</div>
+          <div class="node-label">Backend App</div>
+          <div class="node-status" id="backend-node-status">Online (3000)</div>
+        </div>
+
+        <div class="branch-connector">
+          <div class="branch-line"></div>
+        </div>
+
+        <div class="sub-nodes-row">
+          <div class="node-box sub-node" id="node-prometheus">
+            <div class="node-icon">🔥</div>
+            <div class="node-label">Prometheus</div>
+            <div class="node-status">Metrics 5s</div>
+          </div>
+          <div class="node-box sub-node" id="node-logs">
+            <div class="node-icon">📄</div>
+            <div class="node-label">Logs</div>
+            <div class="node-status">Winston Stream</div>
+          </div>
+          <div class="node-box sub-node" id="node-db">
+            <div class="node-icon">🗄️</div>
+            <div class="node-label">Database</div>
+            <div class="node-status" id="db-node-status">Pool Connected</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow down-arrow">⬇</div>
+
+        <div class="sub-nodes-row">
+          <div class="node-box sub-node" id="node-grafana">
+            <div class="node-icon">📊</div>
+            <div class="node-label">Grafana</div>
+            <div class="node-status">Dashboard 3001</div>
+          </div>
+
+          <div class="flow-arrow">➔</div>
+
+          <div class="node-box sub-node" id="node-alertmanager">
+            <div class="node-icon">🔔</div>
+            <div class="node-label">Alertmanager</div>
+            <div class="node-status">Webhook Active</div>
+          </div>
+
+          <div class="flow-arrow">➔</div>
+
+          <div class="node-box sub-node healer-node" id="node-healer">
+            <div class="node-icon">🩺</div>
+            <div class="node-label">Auto-Recovery</div>
+            <div class="node-status" id="healer-node-status">Ready (4000)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REALTIME METRICS ROW -->
+    <div class="metrics-row">
+      <div class="metric-card">
+        <div class="metric-title">BACKEND HEALTH</div>
+        <div class="metric-value green" id="metric-backend-status">UP</div>
+        <div class="metric-sub" id="metric-uptime">Uptime: --</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">DB CONNECTION</div>
+        <div class="metric-value green" id="metric-db-status">CONNECTED</div>
+        <div class="metric-sub" id="metric-db-pool">Pool: 10/10 active</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">HEAP MEMORY</div>
+        <div class="metric-value" id="metric-memory">-- MB</div>
+        <div class="metric-sub" id="metric-memory-sub">Baseline normal</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-title">AUTO-HEALED INCIDENTS</div>
+        <div class="metric-value cyan" id="metric-heal-count">0</div>
+        <div class="metric-sub" id="metric-success-rate">Success Rate: 100%</div>
+      </div>
+    </div>
+
+    <!-- CHAOS ENGINEERING CONTROL MATRIX -->
+    <section class="card chaos-card">
+      <div class="card-header">
+        <h2>💥 CHAOS ENGINEERING CONTROL CONSOLE</h2>
+        <p>Inject live faults into the system to test autonomous auto-healing detection & remediation</p>
+      </div>
+
+      <div class="chaos-buttons-grid">
+        <button class="btn chaos-btn memory-btn" id="btn-leak-mem">
+          <span class="btn-icon">💣</span>
+          <span class="btn-text">Inject Memory Leak</span>
+          <span class="btn-desc">Allocates +150MB Heap</span>
+        </button>
+
+        <button class="btn chaos-btn db-btn" id="btn-sever-db">
+          <span class="btn-icon">🔌</span>
+          <span class="btn-text">Sever Database Connection</span>
+          <span class="btn-desc">Drops DB pool to 0</span>
+        </button>
+
+        <button class="btn chaos-btn latency-btn" id="btn-slowdown">
+          <span class="btn-icon">🐢</span>
+          <span class="btn-text">Inject Request Latency</span>
+          <span class="btn-desc">Adds 2500ms API delay</span>
+        </button>
+
+        <button class="btn chaos-btn crash-btn" id="btn-crash-app">
+          <span class="btn-icon">💥</span>
+          <span class="btn-text">Crash Backend Service</span>
+          <span class="btn-desc">Forces 503 Unhealthy</span>
+        </button>
+
+        <button class="btn heal-btn" id="btn-manual-heal">
+          <span class="btn-icon">🛡️</span>
+          <span class="btn-text">Trigger Auto-Healing</span>
+          <span class="btn-desc">Executes Remediation Agent</span>
+        </button>
+
+        <button class="btn reset-btn" id="btn-reset-chaos">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Reset System State</span>
+          <span class="btn-desc">Clears all anomalies</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- INCIDENT AUDIT & AUTO-HEAL LOG STREAM -->
+    <section class="card audit-card">
+      <div class="card-header">
+        <h2>📋 AUTONOMOUS HEALING INCIDENT STREAM</h2>
+        <span class="live-pulse"></span>
+      </div>
+
+      <div class="incident-table-wrapper">
+        <table class="incident-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Incident ID</th>
+              <th>Alert Name</th>
+              <th>Severity</th>
+              <th>Remediation Action</th>
+              <th>Duration</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="incident-log-body">
+            <tr>
+              <td colspan="7" class="empty-log">No incidents detected yet. System running smoothly.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- QUICK EXTERNAL TOOL LINKS -->
+    <section class="card tools-card">
+      <div class="card-header">
+        <h2>🔗 OBSERVABILITY TOOL STACK LINKS</h2>
+      </div>
+      <div class="tools-grid">
+        <a href="http://localhost:3000/metrics" target="_blank" class="tool-link">
+          <span class="tool-icon">⚡</span>
+          Backend Metrics (/metrics)
+        </a>
+        <a href="http://localhost:9090" target="_blank" class="tool-link">
+          <span class="tool-icon">🔥</span>
+          Prometheus UI (:9090)
+        </a>
+        <a href="http://localhost:9093" target="_blank" class="tool-link">
+          <span class="tool-icon">🔔</span>
+          Alertmanager UI (:9093)
+        </a>
+        <a href="http://localhost:3001" target="_blank" class="tool-link">
+          <span class="tool-icon">📊</span>
+          Grafana Dashboards (:3001)
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>Production Monitoring & Auto-Healing System • Built with Node.js, Express, Prometheus, Alertmanager, Grafana & Docker</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

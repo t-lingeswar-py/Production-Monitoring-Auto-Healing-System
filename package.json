@@ -1,0 +1,10 @@
+{
+  "name": "production-monitoring-auto-healing-system",
+  "version": "1.0.0",
+  "description": "Production Monitoring & Auto-Healing System with Express, Prometheus, Alertmanager, Grafana and Auto-Recovery Daemon",
+  "scripts": {
+    "install:all": "cd app && npm install && cd ../auto-healer && npm install && cd ../dashboard && npm install",
+    "start": "node scripts/start-local.js",
+    "test": "node scripts/test-auto-healing.js"
+  }
+}
